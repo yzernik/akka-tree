@@ -1,15 +1,18 @@
 
 
     var events = [
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent2/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "created" } }
+        {"actorPath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "terminated" } },
+        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "terminated" } },
+        {"actorPath" : "akka://somesys/user/parent1", "event" : { "type" : "terminated" } },
+        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent1", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent2/child1", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
+        {"actorPath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "started" } }
     ];
 
 
@@ -40,11 +43,37 @@
       }
     }
 
-    function akkatree_onmessage(msg) {
-      console.log(msg);
+    function remove(path, parent){
 
-      var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
-      insert(path, root);
+      var parent_ = parent;
+
+      while (path.length > 1) {
+        var elem = path.shift();
+        if (parent_ && parent_.children) {
+          parent_ = parent_.children.find(function(e) { return e.name == elem; });
+        }
+      }
+
+      if (parent_ && parent_.children) {
+        var elem = parent_.children.find(function(e) { return e.name == path[0]; });
+        if (elem) {
+            var index = parent_.children.indexOf(elem);
+            if (index > -1) {
+                parent_.children.splice(index, 1);
+            }
+        }
+      }
+    }
+
+    function akkatree_onmessage(msg) {
+
+
+      var path = msg.actorPath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
+      if (msg.event.type == "started") {
+        insert(path, root);
+      } if (msg.event.type == "terminated") {
+        remove(path, root);
+      }
       update();
     }
 
@@ -66,7 +95,8 @@
 var force = d3.layout.force()
     .on("tick", tick)
     .charge(function(d) { return d._children ? -d.size / 100 : -30; })
-    .linkDistance(function(d) { return d.target._children ? 80 : 30; })
+//    .charge(function(d) { return d._children ? -d.size / 100 : -30; })
+    .linkDistance(function(d) { return d.target._children ? 150 : 100; })
     .size([w, h - 160]);
 
 var vis = d3.select("body").append("svg:svg")
@@ -115,6 +145,8 @@ function update() {
       .style("fill", color)
       .on("click", click)
       .call(force.drag);
+
+// nodes.forEach(function(d) { d.x = d.depth * 10; });
 
   // Exit any old nodes.
   node.exit().remove();
