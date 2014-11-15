@@ -9,6 +9,7 @@ import kafka.server.{KafkaServer, KafkaConfig}
 import kafka.utils._
 import org.apache.curator.test.TestingServer
 import play.api.libs.json.JsValue
+import scala.collection.JavaConversions._
 
 import scala.collection.immutable.Stream
 
@@ -19,8 +20,9 @@ object Kafka {
   val zkConnectString = "localhost:" + zookeeperServer.getPort()
   val topic = "akka-tree-messages"
 
-  val producer = new KafkaProducer
+  val seed = "localhost:9092"
 
+  lazy val producer = new KafkaProducer
 }
 
 private[journal] class KafkaProducer {
@@ -41,7 +43,7 @@ private[journal] class KafkaProducer {
 
   private def createProducer(kafkaServer: KafkaServer, zkConnectString: String): Producer[String, String] = {
     val props = new Properties()
-    props.put("metadata.broker.list", "localhost:9092")
+    props.put("metadata.broker.list", Kafka.seed)
     props.put("serializer.class", "kafka.serializer.StringEncoder")
     props.put("producer.type", "async")
     props.put("batch.size", "1")

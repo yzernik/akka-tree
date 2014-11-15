@@ -18,13 +18,23 @@ object Boot extends App {
 
 
   //for testing
+  new Thread() {
+    override def run() {
   val s = ActorSystem("foo")
 
-  s.actorOf(Props(new Actor {
+      for (i <- Range(1, 500)) {
+        val a = s.actorOf(Props(new Actor {
     override def receive: Receive = {
       case _ =>
     }
-  }), "fooActor")
+        }), "fooActor-" + i)
+
+        Thread.sleep(2000l)
+        s.stop(a)
+      }
+    }
+    setDaemon(true)
+  }.start()
 
 
 }
