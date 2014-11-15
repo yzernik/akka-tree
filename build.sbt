@@ -33,4 +33,8 @@ fork in run := true
 
 connectInput in run := true
 
-lazy val root = (project in file(".")).enablePlugins(SbtTwirl)
+lazy val root = (project in file("."))
+  .enablePlugins(SbtTwirl)
+  .aggregate(scalajs)
+
+lazy val scalajs = project in file("scalajs")
