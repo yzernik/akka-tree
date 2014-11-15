@@ -51,6 +51,7 @@ class SimpleConsumerWorker(recipient: Recipient) extends Actor {
   private val (seeds, port) = Option(Kafka.seed.split(":")).map(a => (List(a(0)), a(1).toInt)).head
   private var mReplicaBrokers: List[String] = _
   private var flag = new AtomicBoolean(true)
+  val debugFlag = new AtomicBoolean(true)
   new Thread() {
     override def run(): Unit = {
       try {
@@ -141,6 +142,8 @@ class SimpleConsumerWorker(recipient: Recipient) extends Actor {
             //            Console.println(String.valueOf(messageAndOffset.offset) + ": " + new String(bytes, "UTF-8"))
             val message: String = new String(bytes)
             //            Console.println(String.valueOf(messageAndOffset.offset) + ": " + message)
+
+            if (debugFlag.getAndSet(false)) println(s" ------------Client: $clientName --- Message: $message")
             recipient.ref ! KafkaMessage(message)
 
             numRead += 1
