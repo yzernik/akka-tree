@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Akka Tree Visualization</title>
+  <style type="text/css">
+
+    circle.node {
+    cursor: pointer;
+    stroke: #000;
+    stroke-width: .5px;
+    }
+
+    line.link {
+    fill: none;
+    stroke: #9ecae1;
+    stroke-width: 1.5px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="content"></div>
+
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="scalajs-fastopt.js"></script>
+  <script type="text/javascript">
+    var akkatree = AkkaTree();
+
+    // Server Sent Event messages
+    var source = new EventSource("/messages");
+    source.onmessage = function(event) {
+      console.log("event: ", event)
+      document.getElementById("content").innerHTML += event.data + "<br>";
+    };
+
+    source.onerror = function(alert) {
+      console.log("alert: ", alert)
+    }
+  </script>
+</body>
+</html>

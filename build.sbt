@@ -24,11 +24,7 @@ resolvers ++= Seq(
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-
 aspectjSettings
-
-Revolver.settings
-
 
 javaOptions in run <++= AspectjKeys.weaverOptions in Aspectj
 
@@ -38,6 +34,7 @@ connectInput in run := true
 
 lazy val root = (project in file("."))
   .enablePlugins(SbtTwirl)
+  .dependsOn(scalajs)
   .aggregate(scalajs)
 
 lazy val scalajs = project in file("scalajs")

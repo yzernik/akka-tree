@@ -98,6 +98,7 @@ class HttpService(interface: String, port: Int, bindTimeout: Timeout)
     path("messages") {
       get {
         complete {
+          log.info("message enpoint receive request")
           val source = Source(ActorPublisher[Flow.Event](createFlowEventPublisher()))
           Sse.response(source, flowEventToSseMessage)
         }
