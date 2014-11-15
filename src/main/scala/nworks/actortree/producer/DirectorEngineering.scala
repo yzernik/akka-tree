@@ -15,9 +15,9 @@ class DirectorEngineering extends Actor with ActorLogging {
 
   println("Director Engineering created")
 
-  hire(ChiefArchitect.props, ChiefArchitect.name, 2.seconds)
-  hire(BackendLead.props, BackendLead.name, 3.seconds)
-  hire(FrontendLead.props, FrontendLead.name, 4.seconds)
+  hire(ChiefArchitect.props, ChiefArchitect.name, 10.seconds)
+  hire(BackendLead.props, BackendLead.name, 13.seconds)
+  hire(FrontendLead.props, FrontendLead.name, 14.seconds)
 
   def receive = {
     case msg => log.info("msg: " + msg)

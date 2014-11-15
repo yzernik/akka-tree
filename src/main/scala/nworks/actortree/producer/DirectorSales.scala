@@ -12,7 +12,7 @@ object DirectorSales {
 
 class DirectorSales extends Actor with ActorLogging {
 
-  for(nr <- Range(1, 3))(hire(SalesRep.props(nr), SalesRep.name(nr), 1.second))
+  for(nr <- Range(1, 3))(hire(SalesRep.props(nr), SalesRep.name(nr), (nr * 3).second))
 
   def receive = {
     case SalesRep.Quit(nr) =>
