@@ -14,9 +14,9 @@ class CEO extends Actor with ActorLogging {
   import context.dispatcher
   import CEO._
 
-  println("CEO created")
+  println(s"${CEO.name} founded the startup")
 
-//  hire(DirectorEngineering.props, DirectorEngineering.name, 1.second)
+  hire(DirectorEngineering.props, DirectorEngineering.name, 1.second)
   hire(AdvisoryBoard.props, AdvisoryBoard.name, 3.second)
   hire(DirectorSales.props, DirectorSales.name, 4.second)
   hire(DirectorMarketing.props, DirectorMarketing.name, 5.second)

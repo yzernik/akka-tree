@@ -18,7 +18,7 @@ class FrontendDeveloper(nr: Int) extends Actor with ActorLogging {
 
   println("Frontend Developer created")
 
-  val quitInSeconds = Random.nextInt(10)
+  val quitInSeconds = 5//Random.nextInt(10)
   quit(Quit(nr), quitInSeconds.seconds)
 
   def receive = {
