@@ -22,6 +22,7 @@ object SimpleConsumerWorker {
                     partition: Int,
                     whichTime: Long,
                     clientName: String): Long = {
+/*
     val topicAndPartition = new TopicAndPartition(topic, partition)
     val requestInfo = Map(topicAndPartition -> new PartitionOffsetRequestInfo(whichTime, 1))
 
@@ -37,6 +38,9 @@ object SimpleConsumerWorker {
         get(topic).
         map(m => m.get(new TopicAndPartition(topic, partition)).map(por => por.offsets.headOption.getOrElse(0l)).getOrElse(0l)).getOrElse(0l)
     }
+*/
+    // always start from zero for now
+    0l
   }
 }
 class SimpleConsumerWorker(recipient: Recipient, clientName: String) extends Actor {
@@ -209,4 +213,5 @@ class SimpleConsumerWorker(recipient: Recipient, clientName: String) extends Act
       mReplicaBrokers = returnMetaData.replicas.map(_.host).toList
     }
     returnMetaData
-  }}
+  }
+}
