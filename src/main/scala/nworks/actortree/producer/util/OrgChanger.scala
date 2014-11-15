@@ -6,10 +6,13 @@ import scala.concurrent.duration._
 object OrgChanger {
   def hire(props: Props, name: String, duration: FiniteDuration)(implicit context: ActorContext): Unit = {
     import context.dispatcher
-    context.system.scheduler.scheduleOnce(duration)(context.actorOf(props, name))
+    context.system.scheduler.scheduleOnce(duration) {
+      val actorRef = context.actorOf(props, name)
+      context.watch(actorRef)
+    }
+
     println(s"$name hired")
   }
-
 
   def fire(props: Props, name: String)(implicit context: ActorContext): Unit = {
     context.child(name).map(ref => context.stop(ref))

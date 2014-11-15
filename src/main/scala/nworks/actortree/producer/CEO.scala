@@ -2,6 +2,7 @@ package nworks.actortree.producer
 
 import akka.actor._
 import scala.concurrent.duration._
+import util.OrgChanger._
 
 object CEO {
   def props: Props = Props(new CEO())
@@ -15,10 +16,10 @@ class CEO extends Actor with ActorLogging {
 
   println("CEO created")
 
-  context.system.scheduler.scheduleOnce(1.second)(context.actorOf(DirectorEngineering.props, DirectorEngineering.name))
-  context.system.scheduler.scheduleOnce(5.second)(context.actorOf(AdvisoryBoard.props, AdvisoryBoard.name))
-  context.system.scheduler.scheduleOnce(10.seconds)(context.actorOf(DirectorSales.props, AdvisoryBoard.name))
-  context.system.scheduler.scheduleOnce(10.seconds)(context.actorOf(DirectorMarketing.props, DirectorMarketing.name))
+//  hire(DirectorEngineering.props, DirectorEngineering.name, 1.second)
+  hire(AdvisoryBoard.props, AdvisoryBoard.name, 3.second)
+  hire(DirectorSales.props, DirectorSales.name, 4.second)
+  hire(DirectorMarketing.props, DirectorMarketing.name, 5.second)
 
   def receive = {
     case message => log.debug(s"Actor $name received message: $message")
