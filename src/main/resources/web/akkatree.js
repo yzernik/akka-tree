@@ -1,28 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Akka Tree Visualization</title>
-  <style type="text/css">
-
-    circle.node {
-    cursor: pointer;
-    stroke: #000;
-    stroke-width: .5px;
-    }
-
-    line.link {
-    fill: none;
-    stroke: #9ecae1;
-    stroke-width: 1.5px;
-    }
-
-  </style>
-</head>
-<body>
-  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <script type="text/javascript" src="../../../target/scala-2.11/scalajs-fastopt.js"></script>
-  <script type="text/javascript">
 
     var akkatree = AkkaTree();
 
@@ -66,7 +41,7 @@
       }
     }
 
-    function onMessage(msg) {
+    function akkatree_onmessage(msg) {
       var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
       insert(path, root);
       update();
@@ -184,7 +159,3 @@ function flatten(root) {
   root.size = recurse(root);
   return nodes;
 }
-
-</script>
-</body>
-</html>
