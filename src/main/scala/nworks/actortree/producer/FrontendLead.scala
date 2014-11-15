@@ -16,10 +16,11 @@ class FrontendLead extends Actor with ActorLogging {
   import FrontendLead._
 
   println("Frontend Lead created")
-
-  quit(Quit, 10.seconds)
+  for(nr <- Range(1, 10))(hire(FrontendDeveloper.props(nr), FrontendDeveloper.name(nr), nr.seconds))
 
   def receive = {
-    case message => log.debug(s"Actor $name received message: $message")
+    case FrontendDeveloper.Quit(nr) =>
+      fire(FrontendDeveloper.props(nr), FrontendDeveloper.name(nr))
+      hire(FrontendDeveloper.props(nr), FrontendDeveloper.name(nr), 2.seconds)
   }
 }
