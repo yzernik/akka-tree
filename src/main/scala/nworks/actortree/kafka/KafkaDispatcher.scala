@@ -21,7 +21,7 @@ object KafkaDispatcher {
 }
 
 /**
- * User: Evgeny Zhoga <ezhoga@yandex-team.ru>
+ * User: Evgeny Zhoga
  * Date: 15.11.14
  */
 class KafkaDispatcher extends Actor {
@@ -33,7 +33,7 @@ class KafkaDispatcher extends Actor {
       context.actorOf(Props(new Sender(Receipient(ref), name)), name)
       counter += 1
     case Stop(name) =>
-      context.child(name).foreach(context.stop)
+      context.child(name).foreach(_ ! Stop(name))
   }
 }
 
@@ -58,7 +58,7 @@ class Sender(receipient: Receipient, clientName: String) extends Actor {
     }.start()
 
   override def receive: Receive = {
-    case _ => flag.set(false)
+    case Stop(requestedName) if clientName == requestedName => flag.set(false)
   }
 
   private def runConsumer(aTopic: String,
@@ -151,7 +151,7 @@ class Sender(receipient: Receipient, clientName: String) extends Actor {
   }
 
 
-  private def findNewLeader(a_oldLeader: String, a_topic: String, a_partition: Int, a_port: Int, iterations: Int = 3, goToSleep: Boolean = false): String = {
+  private def findNewLeader(aOldLeader: String, aTopic: String, aPartition: Int, aPort: Int, iterations: Int = 3, goToSleep: Boolean = false): String = {
     if (iterations == 0) {
       Console.println("Unable to find new leader after Broker failure. Exiting")
       throw new Exception("Unable to find new leader after Broker failure. Exiting")
@@ -164,16 +164,16 @@ class Sender(receipient: Receipient, clientName: String) extends Actor {
       }
     }
 
-    val metadata = findLeader(mReplicaBrokers, a_port, a_topic, a_partition)
+    val metadata = findLeader(mReplicaBrokers, aPort, aTopic, aPartition)
     if (metadata == null) {
-      findNewLeader(a_oldLeader, a_topic, a_partition, a_port, iterations - 1, goToSleep = true)
+      findNewLeader(aOldLeader, aTopic, aPartition, aPort, iterations - 1, goToSleep = true)
     } else if (metadata.leader == null) {
-      findNewLeader(a_oldLeader, a_topic, a_partition, a_port, iterations - 1, goToSleep = true)
-    } else if (a_oldLeader.equalsIgnoreCase(metadata.leader.get.host) && iterations == 3) {
+      findNewLeader(aOldLeader, aTopic, aPartition, aPort, iterations - 1, goToSleep = true)
+    } else if (aOldLeader.equalsIgnoreCase(metadata.leader.get.host) && iterations == 3) {
       // first time through if the leader hasn't changed give ZooKeeper a second to recover
       // second time, assume the broker did recover before failover, or it was a non-Broker issue
       //
-      findNewLeader(a_oldLeader, a_topic, a_partition, a_port, iterations - 1, goToSleep = true)
+      findNewLeader(aOldLeader, aTopic, aPartition, aPort, iterations - 1, goToSleep = true)
     } else {
       metadata.leader.get.host
     }
@@ -214,27 +214,6 @@ class Sender(receipient: Receipient, clientName: String) extends Actor {
 object Sender {
   val correlationID = 10
 
-  private def getMaxReads(args: Array[String], default: Long): Long = {
-    if (args.length > 0) args(0).toLong
-    else default
-  }
-  private def getTopic(args: Array[String], default: String): String = {
-    if (args.length > 1) args(1)
-    else default
-  }
-  private def getPartition(args: Array[String], default: Int): Int = {
-    if (args.length > 2) args(2).toInt
-    else default
-  }
-  private def getSeeds(args: Array[String], default: List[String]): List[String] = {
-    if (args.length > 3) args(3).split(",").toList
-    else default
-  }
-  private def getPort(args: Array[String], default: Int): Int = {
-    if (args.length > 4) args(4).toInt
-    else default
-  }
-
   def getLastOffset(consumer: SimpleConsumer,
                     topic: String,
                     partition: Int,
@@ -254,8 +233,6 @@ object Sender {
       response.offsetsGroupedByTopic.
         get(topic).
         map(m => m.get(new TopicAndPartition(topic, partition)).map(por => por.offsets.headOption.getOrElse(0l)).getOrElse(0l)).getOrElse(0l)
-      //      val offsets = response.offsets(topic, partition)
-      //offsets(0)
     }
   }
 }
