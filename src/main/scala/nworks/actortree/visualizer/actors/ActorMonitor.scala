@@ -10,7 +10,7 @@ class ActorMonitor extends Actor {
 
   implicit val writes = new Writes[NewActorCreated] {
     override def writes(o: NewActorCreated): JsValue =
-      Json.obj("actorpath" -> o.ref.path.toString, "event" -> Json.obj("type" -> "started"))
+      Json.obj("actorpath" -> o.ref.path.address.toString, "event" -> Json.obj("type" -> "started"))
   }
 
   def receive = {
