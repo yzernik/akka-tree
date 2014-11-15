@@ -19,13 +19,11 @@ class ActorMonitor extends Actor {
       context.watch(na.ref)
       val json = Json.stringify(Json.toJson(na))
       Kafka.producer.sendMessage(json)
-      println(">>>> new actor is created with name " + na.ref.path.name)
 
 
     case Terminated(ref) =>
       val json = Json.stringify(Json.obj("actorpath" -> ref.path.address.toString, "event" -> Json.obj("type" -> "terminated")))
       Kafka.producer.sendMessage(json)
-      println(">>>> actor is removed with name " + ref.path.name)
 
   }
 
