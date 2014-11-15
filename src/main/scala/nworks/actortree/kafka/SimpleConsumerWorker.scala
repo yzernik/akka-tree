@@ -146,7 +146,7 @@ class SimpleConsumerWorker(recipient: Recipient) extends Actor {
 
 //            if (debugFlag.getAndSet(false))
 
-            println(s" >>>>Client: $clientName (${debugCounter.incrementAndGet()}) --- Message: $message")
+            println(s">>>>> Kafka consumer sended ${debugCounter.incrementAndGet()} messages to $clientName    --- Current message: $message")
             recipient.ref ! KafkaMessage(message)
 
             numRead += 1
