@@ -41,7 +41,9 @@
     }
 
     function akkatree_onmessage(msg) {
-      var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
+      console.log(msg);
+
+      var path = msg.actorPath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
       insert(path, root);
       update();
     }

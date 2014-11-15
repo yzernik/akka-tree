@@ -24,6 +24,8 @@
   <script type="text/javascript" src="akkatree.js"></script>
   <script type="text/javascript">
 
+    [].find(function(e){ e === ""});
+
     console.log("start ");
 
     // Server Sent Event messages
@@ -32,8 +34,7 @@
         console.log("open");
     }
     source.onmessage = function(event) {
-      console.log("event: ", event);
-      akkatree_onmessage(event);
+      akkatree_onmessage(JSON.parse(event.data));
     };
 
     source.onerror = function(alert) {
