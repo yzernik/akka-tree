@@ -8,6 +8,6 @@ object Organization {
 
   def start: Unit = {
     val system = ActorSystem("organization")
-    system.scheduler.scheduleOnce(3.seconds)(system.actorOf(CEO.props))
+    system.scheduler.scheduleOnce(3.seconds)(system.actorOf(CEO.props, CEO.name))
   }
 }

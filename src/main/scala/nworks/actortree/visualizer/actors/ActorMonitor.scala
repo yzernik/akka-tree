@@ -13,12 +13,12 @@ class ActorMonitor extends Actor {
 
   implicit val newActorCreatedWrites = new Writes[NewActorCreated] {
     override def writes(o: NewActorCreated): JsValue =
-      Json.obj("actorpath" -> o.ref.path.address.toString, "event" -> Json.obj("type" -> "started"))
+      Json.obj("actorpath" -> o.ref.path.toString, "event" -> Json.obj("type" -> "started"))
   }
 
   implicit val mailboxSizeChangedWrites = new Writes[ActorMailboxSizeChanged] {
     override def writes(o: ActorMailboxSizeChanged): JsValue =
-      Json.obj("actorpath" -> o.ref.path.address.toString,
+      Json.obj("actorpath" -> o.ref.path.toString,
         "event" -> Json.obj("type" -> "mailboxSizeChanged"),
         "size" -> o.mailboxSize.toString
       )
@@ -35,7 +35,7 @@ class ActorMonitor extends Actor {
       Kafka.producer.sendMessage(json)
 
     case Terminated(ref) =>
-      val json = Json.stringify(Json.obj("actorpath" -> ref.path.address.toString, "event" -> Json.obj("type" -> "terminated")))
+      val json = Json.stringify(Json.obj("actorpath" -> ref.path.toString, "event" -> Json.obj("type" -> "terminated")))
       Kafka.producer.sendMessage(json)
   }
 
