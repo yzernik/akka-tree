@@ -78,12 +78,14 @@ class HttpService(interface: String, port: Int, bindTimeout: Timeout)
 
   private def messages: Route =
     path("messages") {
-      get {
-        complete {
-          val recipientActor = createFlowEventPublisher
-          Boot.kafkaDispatcher ! Recipient(recipientActor)
-          val source = Source(ActorPublisher[KafkaMessage](recipientActor))
-          Sse.response(source, kafkaMessageToSseMessage)
+      parameter('id) { id =>
+        get {
+          complete {
+            val recipientActor = createFlowEventPublisher
+            Boot.kafkaDispatcher ! Recipient(recipientActor, id)
+            val source = Source(ActorPublisher[KafkaMessage](recipientActor))
+            Sse.response(source, kafkaMessageToSseMessage)
+          }
         }
       }
     }

@@ -40,11 +40,24 @@
   <script type="text/javascript" src="akkatree.js"></script>
   <script type="text/javascript">
 
+    var guid = (function() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+      }
+      return function() {
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+      };
+    })();
+
     // Server Sent Event messages
-    var source = new EventSource("/messages");
+    var uuid = guid();
+    var source = new EventSource("/messages?id=" + uuid);
 
     source.onmessage = function(event) {
-      console.log("event: ", event)
+      console.log("data: ", event.data)
       akkatree_onmessage(JSON.parse(event.data))
     };
 

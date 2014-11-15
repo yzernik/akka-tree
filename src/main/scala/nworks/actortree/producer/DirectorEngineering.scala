@@ -15,8 +15,8 @@ class DirectorEngineering extends Actor with ActorLogging {
 
   println("Director Engineering created")
 
-  hire(ChiefArchitect.props, ChiefArchitect.name, 1.second)
-  hire(FrontendLead.props, FrontendLead.name, 3.second)
+  hire(ChiefArchitect.props, ChiefArchitect.name, 3.seconds)
+  hire(FrontendLead.props, FrontendLead.name, 5.seconds)
 
   def receive = {
     case ChiefArchitect.Quit =>

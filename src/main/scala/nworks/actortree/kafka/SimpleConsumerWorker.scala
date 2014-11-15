@@ -15,14 +15,14 @@ import nworks.actortree.visualizer.journal.Kafka
 object SimpleConsumerWorker {
   val correlationID = 10
 
-  def props(recipient: Recipient, name: String) = Props(new SimpleConsumerWorker(recipient, name))
+  def props(recipient: Recipient) = Props(new SimpleConsumerWorker(recipient))
 
   def getLastOffset(consumer: SimpleConsumer,
                     topic: String,
                     partition: Int,
                     whichTime: Long,
                     clientName: String): Long = {
-/*
+
     val topicAndPartition = new TopicAndPartition(topic, partition)
     val requestInfo = Map(topicAndPartition -> new PartitionOffsetRequestInfo(whichTime, 1))
 
@@ -38,14 +38,14 @@ object SimpleConsumerWorker {
         get(topic).
         map(m => m.get(new TopicAndPartition(topic, partition)).map(por => por.offsets.headOption.getOrElse(0l)).getOrElse(0l)).getOrElse(0l)
     }
-*/
     // always start from zero for now
-    0l
+//    0l
   }
 }
-class SimpleConsumerWorker(recipient: Recipient, clientName: String) extends Actor {
+class SimpleConsumerWorker(recipient: Recipient) extends Actor {
   import SimpleConsumerWorker._
 
+  private val clientName = recipient.clientId
   private val topic = Kafka.topic
   private val partition = 0
   private val (seeds, port) = Option(Kafka.seed.split(":")).map(a => (List(a(0)), a(1).toInt)).head
