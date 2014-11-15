@@ -5,20 +5,18 @@ import util.OrgChanger._
 import scala.concurrent.duration._
 import scala.util.Random
 
-object BackendDeveloper {
-  def props(nr: Int): Props = Props(new BackendDeveloper(nr))
+object MarketingEmployee {
+  def props(nr: Int): Props = Props(new MarketingEmployee(nr))
 
-  def name(nr: Int) = s"backend-developer-$nr"
+  def name(nr: Int) = s"marketing-employee-$nr"
 
   case class Quit(nr: Int)
 }
 
-class BackendDeveloper(nr: Int) extends Actor with ActorLogging {
-  import BackendDeveloper._
+class MarketingEmployee(nr: Int) extends Actor with ActorLogging {
+  import MarketingEmployee._
 
-  println("Backend Developer created")
-
-  val quitInSeconds = 2 + Random.nextInt(18)
+  val quitInSeconds = 5 + Random.nextInt(25)
   quit(Quit(nr), quitInSeconds.seconds)
 
   def receive = {
