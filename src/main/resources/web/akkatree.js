@@ -1,6 +1,7 @@
 
 
     var events = [
+        {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "started" } },
         {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "mailboxsizechanged", "size": 10 }},
         {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "mailboxsizechanged", "size":5 }},
         {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "mailboxsizechanged", "size": 3 }},
@@ -16,7 +17,8 @@
         {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
         {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
         {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "started" } }
+        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2", "event" : { "type" : "started" } },
     ];
 
 
@@ -28,7 +30,7 @@
 
     var id = 1;
 
-    function insert(path, parent) {
+    function insert(path, parent, actorpath) {
       if (path.length == 0) { return; }
       else {
         var elem = path.shift();
@@ -43,7 +45,10 @@
           }
           parent.children.push(node);
         }
-        insert(path, node);
+        if (path.length == 0) {
+          node.actorpath = actorpath;
+        }
+        insert(path, node, actorpath);
       }
     }
 
@@ -94,11 +99,11 @@
 
       var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
       if (msg.event.type == "started") {
-        insert(path, root);
+        insert(path, root, msg.actorpath);
       } if (msg.event.type == "terminated") {
         remove(path, root);
       } if (msg.event.type == "mailboxsizechanged") {
-         insert(path, root);
+         insert(path, root, msg.actorpath);
          path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
          updateMsgSize(path, root, msg.event.size);
       }
@@ -113,7 +118,7 @@
       }
     }
 //    window.setTimeout(eventsource, 0);
-    root = {"name": "user", "size": 0, "id" : 0, "children" : [] };
+    root = {"name": "user", "size": 0, "id" : 0, "children" : [], "actorpath" : "ActorSystem" };
     root.fixed = true;
     root.x = w / 2;
     root.y = h / 2 - 80;
@@ -127,7 +132,7 @@ var force = d3.layout.force()
     .linkDistance(function(d) { return 50; })
     .size([w, h - 160]);
 
-var vis = d3.select("body").append("svg:svg")
+var vis = d3.select("#canvas").append("svg:svg")
     .attr("width", w)
     .attr("height", h);
 
@@ -199,14 +204,7 @@ function color(d) {
 
 // Toggle children on click.
 function click(d) {
-  if (d.children) {
-    d._children = d.children;
-    d.children = null;
-  } else {
-    d.children = d._children;
-    d._children = null;
-  }
-  update();
+  document.getElementById("actorname").innerHTML = d.actorpath;
 }
 
 // Returns a list of all nodes under the root.
