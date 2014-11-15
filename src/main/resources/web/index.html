@@ -34,12 +34,13 @@
         console.log("open");
     }
     source.onmessage = function(event) {
-      akkatree_onmessage(JSON.parse(event.data));
+      console.log("event: ", event)
+      akkatree_onmessage(JSON.parse(event.data))
     };
 
     source.onerror = function(alert) {
-      console.log("alert: ", alert);
-    };
+      console.log("alert: ", alert)
+    }
   </script>
 </body>
 </html>

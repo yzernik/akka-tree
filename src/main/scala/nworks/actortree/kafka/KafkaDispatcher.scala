@@ -15,6 +15,11 @@ case class KafkaMessage(message: String)
 case class Stop(name: String)
 
 case class ClientName(name: String)
+
+object KafkaDispatcher {
+  def props = Props(new KafkaDispatcher())
+}
+
 /**
  * User: Evgeny Zhoga <ezhoga@yandex-team.ru>
  * Date: 15.11.14

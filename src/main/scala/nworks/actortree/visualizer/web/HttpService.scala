@@ -9,6 +9,8 @@ import akka.stream.FlowMaterializer
 import akka.stream.actor.ActorPublisher
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
+import nworks.actortree.kafka.{KafkaMessage, Receipient}
+import nworks.actortree.visualizer.Boot
 import play.api.libs.json.Json
 
 import scala.concurrent.duration.DurationInt
@@ -20,12 +22,8 @@ object HttpService {
   def props(interface: String, port: Int, bindTimeout: Timeout): Props =
     Props(new HttpService(interface, port, bindTimeout))
 
-  def flowEventToSseMessage(event: Flow.Event): Sse.Message =
-    event match {
-      case actorAdded: Flow.ActorAdded =>
-        val data = Json.stringify(Json.toJson(actorAdded))
-        Sse.Message(data)
-    }
+  def kafkaMessageToSseMessage(kafkaMessage: KafkaMessage): Sse.Message =
+    Sse.Message(kafkaMessage.message)
 }
 
 class HttpService(interface: String, port: Int, bindTimeout: Timeout)
@@ -82,8 +80,10 @@ class HttpService(interface: String, port: Int, bindTimeout: Timeout)
     path("messages") {
       get {
         complete {
-          val source = Source(ActorPublisher[Flow.Event](createFlowEventPublisher()))
-          Sse.response(source, flowEventToSseMessage)
+          val receipientActor = createFlowEventPublisher
+          Boot.kafkaDispatcher ! Receipient(receipientActor)
+          val source = Source(ActorPublisher[KafkaMessage](receipientActor))
+          Sse.response(source, kafkaMessageToSseMessage)
         }
       }
     }
