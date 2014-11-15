@@ -2,22 +2,22 @@
 
     var events = [
         {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "mailboxsizechanged", "size": 10 }},
-        {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "mailboxsizechanged", "size":5 }},
-        {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "mailboxsizechanged", "size": 3 }},
-        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "terminated" } },
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "terminated" } },
+        {"actorpath" : "akka://somesys/user/parent2/child2/abc/def/ghi", "event" : { "type" : "mailboxsizechanged", "size": 10 }},
+        {"actorpath" : "akka://somesys/user/parent1/child2/abc/def/ghi", "event" : { "type" : "mailboxsizechanged", "size":5 }},
+        {"actorpath" : "akka://somesys/user/parent1/child3/abc/def/ghi", "event" : { "type" : "mailboxsizechanged", "size": 3 }},
+        {"actorpath" : "akka://somesys/user/parent2/child3/abc/def/ghi", "event" : { "type" : "terminated" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1/abc/def/ghi", "event" : { "type" : "terminated" } },
         {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "terminated" } },
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child2/abc/def/ghi", "event" : { "type" : "started" } },
         {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent2/child1", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
-        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child1/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child3/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child2/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child2/abc/def/ghi", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child3/abc/def/ghi", "event" : { "type" : "started" } },
         {"actorpath" : "akka://somesys/user/parent2", "event" : { "type" : "started" } },
     ];
 
@@ -30,7 +30,7 @@
 
     var id = 1;
 
-    function insert(path, parent, actorpath) {
+    function insert(path, parent, actorpath, level) {
       if (path.length == 0) { return; }
       else {
         var elem = path.shift();
@@ -39,7 +39,7 @@
           node = parent.children.find(function(e) { return e.name == elem; });
         }
         if (!node) {
-          node = {"name" : elem, "size": 1, "id": id++};
+          node = {"name" : elem, "size": 1, "id": id++, "level" : level};
           if (!parent.children) {
             parent.children = [];
           }
@@ -48,7 +48,7 @@
         if (path.length == 0) {
           node.actorpath = actorpath;
         }
-        insert(path, node, actorpath);
+        insert(path, node, actorpath, level + 1);
       }
     }
 
@@ -88,7 +88,6 @@
         var elem = parent_.children.find(function(e) { return e.name == path[0]; });
         if (elem) {
             elem.size = size;
-            console.log("elem.size: " + elem.size);
         }
       }
     }
@@ -99,11 +98,11 @@
 
       var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
       if (msg.event.type == "started") {
-        insert(path, root, msg.actorpath);
+        insert(path, root, msg.actorpath, 0);
       } if (msg.event.type == "terminated") {
         remove(path, root);
       } if (msg.event.type == "mailboxsizechanged") {
-         insert(path, root, msg.actorpath);
+         insert(path, root, msg.actorpath, 0);
          path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
          updateMsgSize(path, root, msg.event.size);
       }
@@ -117,7 +116,7 @@
         window.setTimeout(eventsource, 1000);
       }
     }
-    window.setTimeout(eventsource, 0);
+//    window.setTimeout(eventsource, 0);
     root = {"name": "user", "size": 0, "id" : 0, "children" : [], "actorpath" : "ActorSystem" };
     root.fixed = true;
     root.x = w / 2;
@@ -196,10 +195,10 @@ function tick() {
       .attr("cy", function(d) { return d.y; });
 }
 
-// Color leaf nodes orange, and packages white or blue.
 function color(d) {
-  //return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
-  return d.name == "user" ? "#c6dbef" : "#fd8d3c";
+  var colors = ["#1d4d70", "#3182bd", "#c6dbef", "#ffffff"];
+  console.log("level " + d.level);
+  return d.name == "user" ? "#ff0000" : colors[d.level % colors.length];
 }
 
 // Toggle children on click.
