@@ -1,7 +1,7 @@
 package nworks.actortree.producer
 
 import akka.actor._
-import nworks.actortree.producer.util.OrgChanger._
+import util.OrgChanger._
 import scala.concurrent.duration._
 
 object DirectorSales {
@@ -12,7 +12,7 @@ object DirectorSales {
 
 class DirectorSales extends Actor with ActorLogging {
 
-  for(nr <- Range(1, 3))(hire(SalesRep.props(nr), SalesRep.name(nr), (nr * 3).second))
+  for(nr <- Range(1, 3))(hire(SalesRep.props(nr), SalesRep.name(nr), (nr * 3).seconds))
 
   def receive = {
     case SalesRep.Quit(nr) =>

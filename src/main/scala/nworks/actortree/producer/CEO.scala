@@ -16,10 +16,11 @@ class CEO extends Actor with ActorLogging {
 
   println(s"${CEO.name} founded the startup")
 
-  hire(DirectorEngineering.props, DirectorEngineering.name, 1.second)
-  hire(AdvisoryBoard.props, AdvisoryBoard.name, 3.second)
-  hire(DirectorSales.props, DirectorSales.name, 4.second)
-  hire(DirectorMarketing.props, DirectorMarketing.name, 5.second)
+  hire(DirectorEngineering.props, DirectorEngineering.name, 5.second)
+
+  hire(DirectorSales.props, DirectorSales.name, 8.second)
+  hire(DirectorMarketing.props, DirectorMarketing.name, 10.second)
+  hire(AdvisoryBoard.props, AdvisoryBoard.name, 15.second)
 
   def receive = {
     case message => log.debug(s"Actor $name received message: $message")
