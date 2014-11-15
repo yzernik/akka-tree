@@ -1,5 +1,4 @@
 
-    var akkatree = AkkaTree();
 
     var events = [
         {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
@@ -49,12 +48,12 @@
 
     function eventsource() {
       var evt = events.pop();
-      onMessage(evt);
+      akkatree_onmessage(evt);
       if (events.length != 0) {
         window.setTimeout(eventsource, 1000);
       }
     }
-    window.setTimeout(eventsource, 0);
+//    window.setTimeout(eventsource, 0);
     root = {"name": "user", "size": 1, "id" : 0, "children" : [] };
     root.fixed = true;
     root.x = w / 2;

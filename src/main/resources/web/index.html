@@ -24,17 +24,21 @@
   <script type="text/javascript" src="akkatree.js"></script>
   <script type="text/javascript">
 
+    console.log("start ");
 
     // Server Sent Event messages
     var source = new EventSource("/messages");
+    source.onopen = function (e) {
+        console.log("open");
+    }
     source.onmessage = function(event) {
-      console.log("event: ", event)
+      console.log("event: ", event);
       akkatree_onmessage(event);
     };
 
     source.onerror = function(alert) {
-      console.log("alert: ", alert)
-    }
+      console.log("alert: ", alert);
+    };
   </script>
 </body>
 </html>
