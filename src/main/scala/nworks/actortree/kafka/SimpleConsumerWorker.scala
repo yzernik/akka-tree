@@ -1,6 +1,6 @@
 package nworks.actortree.kafka
 
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.{AtomicInteger, AtomicBoolean}
 
 import akka.actor.{Props, Actor}
 import kafka.api._
@@ -52,6 +52,7 @@ class SimpleConsumerWorker(recipient: Recipient) extends Actor {
   private var mReplicaBrokers: List[String] = _
   private var flag = new AtomicBoolean(true)
   val debugFlag = new AtomicBoolean(true)
+  val debugCounter = new AtomicInteger(0)
   new Thread() {
     override def run(): Unit = {
       try {
@@ -143,7 +144,9 @@ class SimpleConsumerWorker(recipient: Recipient) extends Actor {
             val message: String = new String(bytes)
             //            Console.println(String.valueOf(messageAndOffset.offset) + ": " + message)
 
-            if (debugFlag.getAndSet(false)) println(s" ------------Client: $clientName --- Message: $message")
+//            if (debugFlag.getAndSet(false))
+
+            println(s" >>>>Client: $clientName (${debugCounter.incrementAndGet()}) --- Message: $message")
             recipient.ref ! KafkaMessage(message)
 
             numRead += 1
