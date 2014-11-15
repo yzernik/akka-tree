@@ -8,12 +8,13 @@ scalaVersion := "2.11.4"
 
 libraryDependencies ++= {
   Seq(
+    "io.spray"            %%  "spray-can"     % "1.3.1",
+    "io.spray"            %%  "spray-routing" % "1.3.1",
     "com.typesafe.akka"   %% "akka-http-experimental" % "0.11",
     "com.typesafe.play"   %% "play-json"              % "2.3.0",
     "com.typesafe.akka"   %% "akka-actor"             % "2.3.7",
     "org.aspectj"         %  "aspectjweaver"          % "1.7.2",
-    "org.aspectj"         %  "aspectjrt"              % "1.7.2",
-    "org.specs2"          %% "specs2"                 % "2.4.11" % "test"
+    "org.aspectj"         %  "aspectjrt"              % "1.7.2"
   )
 }
 

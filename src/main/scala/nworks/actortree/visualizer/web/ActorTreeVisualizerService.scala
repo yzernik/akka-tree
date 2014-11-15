@@ -1,7 +1,6 @@
 package nworks.actortree.visualizer.web
 
 import akka.actor.{Props, Actor}
-import nworks.actortree.visualizer.bridge.PlayTwirlSupport
 import play.api.libs.json.Json
 import spray.can.Http
 import spray.routing.HttpService
@@ -18,7 +17,7 @@ object EventSourceMediaType {
   MediaTypes.register(`text/event-stream`)
 }
 
-class ActorTreeVisualizerService extends Actor with HttpService with PlayJsonSupport with PlayTwirlSupport {
+class ActorTreeVisualizerService extends Actor with HttpService with PlayJsonSupport {
 
   import EventSourceMediaType._
 
@@ -31,7 +30,8 @@ class ActorTreeVisualizerService extends Actor with HttpService with PlayJsonSup
       path("") {
         respondWithMediaType(`text/html`) {
           complete {
-            html.index("Actor Tree")
+            ???
+            //html.index("Actor Tree")
           }
         }
       } ~
