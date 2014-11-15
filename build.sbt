@@ -14,7 +14,9 @@ libraryDependencies ++= {
     "com.typesafe.play"   %% "play-json"              % "2.3.0",
     "com.typesafe.akka"   %% "akka-actor"             % "2.3.7",
     "org.aspectj"         %  "aspectjweaver"          % "1.7.2",
-    "org.aspectj"         %  "aspectjrt"              % "1.7.2"
+    "org.aspectj"         %  "aspectjrt"              % "1.7.2",
+    "org.apache.curator"  % "curator-test"            % "2.7.0", //gives im-memory zookeeper
+    "org.apache.kafka"    %% "kafka"                  % "0.8.2-beta"
   )
 }
 
