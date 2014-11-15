@@ -1,18 +1,22 @@
 
 
     var events = [
-        {"actorPath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "terminated" } },
-        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "terminated" } },
-        {"actorPath" : "akka://somesys/user/parent1", "event" : { "type" : "terminated" } },
-        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent1", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent2/child1", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
-        {"actorPath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "started" } }
+        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "mailboxsizechanged", "size": 10 }},
+        {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "mailboxsizechanged", "size":5 }},
+        {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "mailboxsizechanged", "size": 3 }},
+        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "terminated" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "terminated" } },
+        {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "terminated" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child1", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "started" } },
+        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "started" } }
     ];
 
 
@@ -33,7 +37,7 @@
           node = parent.children.find(function(e) { return e.name == elem; });
         }
         if (!node) {
-          node = {"name" : elem, "size": 5000, "id": id++};
+          node = {"name" : elem, "size": 1, "id": id++};
           if (!parent.children) {
             parent.children = [];
           }
@@ -65,6 +69,26 @@
       }
     }
 
+    function updateMsgSize(path, parent, size) {
+
+      var parent_ = parent;
+
+      while (path.length > 1) {
+        var elem = path.shift();
+        if (parent_ && parent_.children) {
+          parent_ = parent_.children.find(function(e) { return e.name == elem; });
+        }
+      }
+      if (parent_ && parent_.children) {
+        var elem = parent_.children.find(function(e) { return e.name == path[0]; });
+        if (elem) {
+            elem.size = size;
+            console.log("elem.size: " + elem.size);
+        }
+      }
+    }
+
+
     function akkatree_onmessage(msg) {
 
 
@@ -73,6 +97,10 @@
         insert(path, root);
       } if (msg.event.type == "terminated") {
         remove(path, root);
+      } if (msg.event.type == "mailboxsizechanged") {
+         insert(path, root);
+         path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
+         updateMsgSize(path, root, msg.event.size);
       }
       update();
     }
@@ -85,7 +113,7 @@
       }
     }
 //    window.setTimeout(eventsource, 0);
-    root = {"name": "user", "size": 1, "id" : 0, "children" : [] };
+    root = {"name": "user", "size": 0, "id" : 0, "children" : [] };
     root.fixed = true;
     root.x = w / 2;
     root.y = h / 2 - 80;
@@ -94,9 +122,9 @@
 
 var force = d3.layout.force()
     .on("tick", tick)
-    .charge(function(d) { return d._children ? -d.size / 100 : -30; })
+    .charge(function(d) { return -500; })
 //    .charge(function(d) { return d._children ? -d.size / 100 : -30; })
-    .linkDistance(function(d) { return d.target._children ? 150 : 100; })
+    .linkDistance(function(d) { return 50; })
     .size([w, h - 160]);
 
 var vis = d3.select("body").append("svg:svg")
@@ -133,16 +161,17 @@ function update() {
       .data(nodes, function(d) { return d.id; })
       .style("fill", color);
 
-  node.transition()
-      .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; });
+  //node.transition()
+  //    .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; });
 
   // Enter any new nodes.
   node.enter().append("svg:circle")
       .attr("class", "node")
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
-      .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; })
+      .attr("r", function(d) { return Math.sqrt((d.size + 1) * 20); })
       .style("fill", color)
+      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
       .on("click", click)
       .call(force.drag);
 
@@ -164,7 +193,8 @@ function tick() {
 
 // Color leaf nodes orange, and packages white or blue.
 function color(d) {
-  return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+  //return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+  return d.name == "user" ? "#c6dbef" : "#fd8d3c";
 }
 
 // Toggle children on click.
@@ -184,11 +214,11 @@ function flatten(root) {
   var nodes = [], i = 0;
 
   function recurse(node) {
-    if (node.children) node.size = node.children.reduce(function(p, v) { return p + recurse(v); }, 0);
+    if (node.children) node.children.reduce(function(p, v) { return p + recurse(v); }, 0);
     nodes.push(node);
     return node.size;
   }
 
-  root.size = recurse(root);
+  recurse(root);
   return nodes;
 }
