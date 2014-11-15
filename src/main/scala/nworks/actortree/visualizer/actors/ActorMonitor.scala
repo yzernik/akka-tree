@@ -11,7 +11,7 @@ class ActorMonitor extends Actor {
 
   implicit val writes = new Writes[NewActorCreated] {
     override def writes(o: NewActorCreated): JsValue =
-      Json.obj("actorpath" -> o.ref.path.name, "event" -> Json.obj("type" -> "started"))
+      Json.obj("actorpath" -> o.ref.path.address.toString, "event" -> Json.obj("type" -> "started"))
   }
 
   def receive = {
@@ -23,7 +23,7 @@ class ActorMonitor extends Actor {
 
 
     case Terminated(ref) =>
-      val json = Json.stringify(Json.obj("actorpath" -> ref.path.name, "event" -> Json.obj("type" -> "terminated")))
+      val json = Json.stringify(Json.obj("actorpath" -> ref.path.address.toString, "event" -> Json.obj("type" -> "terminated")))
       Kafka.producer.sendMessage(json)
       println(">>>> actor is removed with name " + ref.path.name)
 
