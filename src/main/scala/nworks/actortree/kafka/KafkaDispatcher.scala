@@ -25,6 +25,7 @@ class KafkaDispatcher extends Actor {
 
   def receive = {
     case Recipient(ref, clientId) =>
+      println(">>>>>>>>> new recipient " + clientId)
 //      ref ! ClientName(clientId)
       context.actorOf(SimpleConsumerWorker.props(Recipient(ref, clientId)), clientId)
       map.put(ref.path.address.toString, clientId)

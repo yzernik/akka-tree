@@ -23,23 +23,19 @@ object Boot extends App {
 
   //for testing
   Organization.start
-//  new Thread() {
-//    override def run() {
-//
-//
-//      for (i <- Range(1, 500)) {
-//        val a = s.actorOf(Props(new Actor {
-//    override def receive: Receive = {
-//      case _ =>
-//    }
-//        }), "fooActor-" + i)
-//
-//        Thread.sleep(2000l)
-//        s.stop(a)
-//      }
-//    }
-//    setDaemon(true)
-//  }.start()
 
+//  val test = ActorSystem("test")
+//  val parent = test.actorOf(Props(new Actor {
+//    def receive = {
+//      case _ =>
+//        (0 to 3) foreach { x =>
+//          context.actorOf(Props(new Actor {
+//            def receive = Actor.emptyBehavior
+//          }))
+//        }
+//    }
+//  }), "parent")
+//
+//  parent ! "create"
 
 }
