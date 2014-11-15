@@ -3,8 +3,8 @@ package nworks.actortree.visualizer
 import akka.actor.{ActorSystem, Props}
 import akka.io.IO
 import nworks.actortree.visualizer.actors.ActorMonitor
-import nworks.actortree.visualizer.web.ActorTreeVisualizerService
-import spray.can.Http
+import nworks.actortree.visualizer.web.HttpService
+import scala.concurrent.duration._
 
 object Boot extends App {
 
@@ -13,9 +13,6 @@ object Boot extends App {
 
   val monitor = system.actorOf(Props[ActorMonitor], name = "monitor")
 
-  // create and start our service actor
-  val service = system.actorOf(Props[ActorTreeVisualizerService], "visualizer-service")
-
-  // start a new HTTP server on port 8080 with our service actor as the handler
-  IO(Http) ! Http.Bind(service, interface = "localhost", port = 8080)
+  // create and start our http service
+  val service = system.actorOf(HttpService.props("localhost", 8080, 3.seconds), "http-service")
 }
