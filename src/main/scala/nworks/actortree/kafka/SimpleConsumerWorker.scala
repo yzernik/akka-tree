@@ -15,7 +15,7 @@ import nworks.actortree.visualizer.journal.Kafka
 object SimpleConsumerWorker {
   val correlationID = 10
 
-  def props(receipient: Receipient, name: String) = Props(new SimpleConsumerWorker(receipient, name))
+  def props(recipient: Recipient, name: String) = Props(new SimpleConsumerWorker(recipient, name))
 
   def getLastOffset(consumer: SimpleConsumer,
                     topic: String,
@@ -39,7 +39,7 @@ object SimpleConsumerWorker {
     }
   }
 }
-class SimpleConsumerWorker(receipient: Receipient, clientName: String) extends Actor {
+class SimpleConsumerWorker(recipient: Recipient, clientName: String) extends Actor {
   import SimpleConsumerWorker._
 
   private val topic = Kafka.topic
@@ -137,7 +137,7 @@ class SimpleConsumerWorker(receipient: Receipient, clientName: String) extends A
             //            Console.println(String.valueOf(messageAndOffset.offset) + ": " + new String(bytes, "UTF-8"))
             val message: String = new String(bytes)
             //            Console.println(String.valueOf(messageAndOffset.offset) + ": " + message)
-            receipient.ref ! KafkaMessage(message)
+            recipient.ref ! KafkaMessage(message)
 
             numRead += 1
           }

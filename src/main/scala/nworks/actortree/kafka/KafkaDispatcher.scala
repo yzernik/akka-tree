@@ -2,7 +2,7 @@ package nworks.actortree.kafka
 
 import akka.actor.{Props, Actor, ActorRef}
 
-case class Receipient(ref: ActorRef)
+case class Recipient(ref: ActorRef)
 
 case class KafkaMessage(message: String)
 
@@ -21,10 +21,10 @@ object KafkaDispatcher {
 class KafkaDispatcher extends Actor {
   private var counter = 0
   def receive = {
-    case Receipient(ref) =>
-      val name = "receipient-" + counter
+    case Recipient(ref) =>
+      val name = "recipient-" + counter
       ref ! ClientName(name)
-      context.actorOf(SimpleConsumerWorker.props(Receipient(ref), name), name)
+      context.actorOf(SimpleConsumerWorker.props(Recipient(ref), name), name)
       counter += 1
     case Stop(name) =>
       context.child(name).foreach(_ ! Stop(name))

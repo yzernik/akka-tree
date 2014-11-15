@@ -9,7 +9,7 @@ import akka.stream.FlowMaterializer
 import akka.stream.actor.ActorPublisher
 import akka.stream.scaladsl.Source
 import akka.util.Timeout
-import nworks.actortree.kafka.{KafkaMessage, Receipient}
+import nworks.actortree.kafka.{KafkaMessage, Recipient}
 import nworks.actortree.visualizer.Boot
 import play.api.libs.json.Json
 
@@ -80,9 +80,9 @@ class HttpService(interface: String, port: Int, bindTimeout: Timeout)
     path("messages") {
       get {
         complete {
-          val receipientActor = createFlowEventPublisher
-          Boot.kafkaDispatcher ! Receipient(receipientActor)
-          val source = Source(ActorPublisher[KafkaMessage](receipientActor))
+          val recipientActor = createFlowEventPublisher
+          Boot.kafkaDispatcher ! Recipient(recipientActor)
+          val source = Source(ActorPublisher[KafkaMessage](recipientActor))
           Sse.response(source, kafkaMessageToSseMessage)
         }
       }
