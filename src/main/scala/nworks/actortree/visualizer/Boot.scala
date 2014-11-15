@@ -1,6 +1,6 @@
 package nworks.actortree.visualizer
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{Actor, ActorSystem, Props}
 import akka.io.IO
 import nworks.actortree.visualizer.actors.ActorMonitor
 import nworks.actortree.visualizer.web.HttpService
@@ -15,4 +15,16 @@ object Boot extends App {
 
   // create and start our http service
   val service = system.actorOf(HttpService.props("localhost", 8080, 3.seconds), "http-service")
+
+
+  //for testing
+  val s = ActorSystem("foo")
+
+  s.actorOf(Props(new Actor {
+    override def receive: Receive = {
+      case _ =>
+    }
+  }), "fooActor")
+
+
 }
