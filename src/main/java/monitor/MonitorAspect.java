@@ -16,6 +16,8 @@ import akka.actor.ActorCell;
 @Aspect
 public class MonitorAspect {
 
+    private Integer threshold = 10;
+
     @AfterReturning(pointcut = "execution (* akka.actor.ActorRefFactory.actorOf(..))",
             returning = "ref", argNames = "ref")
     public void actorCreationAdvice(ActorRef ref) {
@@ -31,8 +33,10 @@ public class MonitorAspect {
     public void afterSendMessageToActorCell(ActorCell cell) {
      if(!cell.self().path().toString().contains("actor-tree")) {
          Integer messageCount = cell.mailbox().numberOfMessages();
-         System.out.println("------------------ Actor " + cell.self().path().name() + " " + messageCount);
-         Boot.monitor().tell(new ActorMailboxSizeChanged(cell.self(), messageCount), ActorRef.noSender());
+         if(messageCount > threshold) {
+             System.out.println("------------------ Actor " + cell.self().path().name() + " " + messageCount);
+             Boot.monitor().tell(new ActorMailboxSizeChanged(cell.self(), messageCount), ActorRef.noSender());
+         }
      }
     }
 
