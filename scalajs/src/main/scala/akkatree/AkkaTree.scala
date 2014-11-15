@@ -1,9 +1,13 @@
 package akkatree
 
-import scala.scalajs.js.JSApp
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSExport
 
-object AkkaTree extends JSApp {
-  def main(): Unit = {
-    println("Hello world!")
-  }
+@JSExport
+object AkkaTree {
+    @JSExport
+    def onMessage(event: js.Dictionary[String]): Unit = {
+
+      println(event.get("actorpath"))
+    }
 }
