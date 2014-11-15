@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <title>Akka Tree Visualization</title>
   <style type="text/css">
-
+    body {
+      font-family: monospace;
+    }
     circle.node {
     cursor: pointer;
     stroke: #000;
@@ -22,10 +24,17 @@
       right: 10px;
       z-index: 10;
     }
+    #log {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 10;
+    }
   </style>
 </head>
 <body>
   <div id="actorname"></div>
+  <div id="log"></div>
   <div id="canvas"></div>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="akkatree.js"></script>

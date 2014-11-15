@@ -95,7 +95,7 @@
 
 
     function akkatree_onmessage(msg) {
-
+      document.getElementById("log").innerHTML = JSON.stringify(msg);
 
       var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
       if (msg.event.type == "started") {
@@ -117,7 +117,7 @@
         window.setTimeout(eventsource, 1000);
       }
     }
-//    window.setTimeout(eventsource, 0);
+    window.setTimeout(eventsource, 0);
     root = {"name": "user", "size": 0, "id" : 0, "children" : [], "actorpath" : "ActorSystem" };
     root.fixed = true;
     root.x = w / 2;
