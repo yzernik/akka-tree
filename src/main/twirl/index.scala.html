@@ -1,0 +1,27 @@
+@(title: String)
+
+<html>
+    <head>
+        <title>@title</title>
+        <script>
+          var source = new EventSource('http://localhost:8080/actortree/es');
+          source.addEventListener('message', function(e) {
+              console.log(e.data);
+             }, false);
+
+          source.addEventListener('open', function(e) {
+             alert("connection opend " + e)
+            }, false);
+
+          source.addEventListener('error', function(e) {
+              alert(e)
+             if (e.readyState == EventSource.CLOSED) {
+              // Connection was closed.
+              }
+            }, false);
+        </script>
+    </head>
+    <body>
+        The tree stuff will go in here
+    </body>
+</html>
