@@ -3,6 +3,7 @@ package nworks.actortree.visualizer
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.io.IO
 import nworks.actortree.kafka.KafkaDispatcher
+import nworks.actortree.producer.Organization
 import nworks.actortree.visualizer.actors.ActorMonitor
 import nworks.actortree.visualizer.web.HttpService
 import scala.concurrent.duration._
@@ -21,23 +22,24 @@ object Boot extends App {
 
 
   //for testing
-  new Thread() {
-    override def run() {
-  val s = ActorSystem("foo")
-
-      for (i <- Range(1, 500)) {
-        val a = s.actorOf(Props(new Actor {
-    override def receive: Receive = {
-      case _ =>
-    }
-        }), "fooActor-" + i)
-
-        Thread.sleep(2000l)
-        s.stop(a)
-      }
-    }
-    setDaemon(true)
-  }.start()
+  Organization.start
+//  new Thread() {
+//    override def run() {
+//
+//
+//      for (i <- Range(1, 500)) {
+//        val a = s.actorOf(Props(new Actor {
+//    override def receive: Receive = {
+//      case _ =>
+//    }
+//        }), "fooActor-" + i)
+//
+//        Thread.sleep(2000l)
+//        s.stop(a)
+//      }
+//    }
+//    setDaemon(true)
+//  }.start()
 
 
 }
