@@ -68,7 +68,7 @@
     function akkatree_onmessage(msg) {
 
 
-      var path = msg.actorPath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
+      var path = msg.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
       if (msg.event.type == "started") {
         insert(path, root);
       } if (msg.event.type == "terminated") {
