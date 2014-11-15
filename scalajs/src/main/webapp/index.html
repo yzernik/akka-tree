@@ -27,35 +27,61 @@
     var akkatree = AkkaTree();
 
     var events = [
-        {"actorpath" : "akka://user/parent1/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent1/child2", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent2/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent1/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent1/child3", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent1/child1", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent2/child2", "event" : { "type" : "created" } },
-        {"actorpath" : "akka://user/parent2/child3", "event" : { "type" : "created" } }
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent1/child2", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent1", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent2/child1", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent1/child3", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent1/child1", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent2/child2", "event" : { "type" : "created" } },
+        {"actorpath" : "akka://somesys/user/parent2/child3", "event" : { "type" : "created" } }
     ];
 
-    function eventsource() {
-      akkatree.onMessage(events.pop());
-      if (events.length != 0) {
-        window.setTimeout(eventsource, 1000);
-      }
-    }
-    window.setTimeout(eventsource, 0);
-
-
-
-  </script>
-<script>
 
   var w = 1280,
     h = 800,
     node,
     link,
     root;
+
+    var id = 1;
+
+    function insert(path, parent) {
+      if (path.length == 0) { return; }
+      else {
+        var elem = path.shift();
+        var node;
+        if (parent.children) {
+          node = parent.children.find(function(e) { return e.name == elem; });
+        }
+        if (!node) {
+          node = {"name" : elem, "size": 5000, "id": id++};
+          if (!parent.children) {
+            parent.children = [];
+          }
+          parent.children.push(node);
+        }
+        insert(path, node);
+      }
+    }
+
+    function eventsource() {
+      var evt = events.pop();
+      var path = evt.actorpath.replace(/akka:\/\/[^\/]+\/user\//,'').split("/");
+      insert(path, root);
+      update();
+      if (events.length != 0) {
+        window.setTimeout(eventsource, 1000);
+      }
+    }
+    window.setTimeout(eventsource, 3000);
+    root = {"name": "user", "size": 1, "id" : 0, "children" : [] };
+    root.fixed = true;
+    root.x = w / 2;
+    root.y = h / 2 - 80;
+
+
 
 var force = d3.layout.force()
     .on("tick", tick)
@@ -66,14 +92,6 @@ var force = d3.layout.force()
 var vis = d3.select("body").append("svg:svg")
     .attr("width", w)
     .attr("height", h);
-
-d3.json("flare.json", function(json) {
-  root = json;
-  root.fixed = true;
-  root.x = w / 2;
-  root.y = h / 2 - 80;
-  update();
-});
 
 function update() {
   var nodes = flatten(root),
@@ -155,7 +173,7 @@ function flatten(root) {
 
   function recurse(node) {
     if (node.children) node.size = node.children.reduce(function(p, v) { return p + recurse(v); }, 0);
-    if (!node.id) node.id = ++i;
+    //if (!node.id) node.id = ++i;
     nodes.push(node);
     return node.size;
   }
