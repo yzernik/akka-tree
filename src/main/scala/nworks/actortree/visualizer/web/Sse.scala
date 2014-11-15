@@ -22,7 +22,7 @@ import akka.util.ByteString
 
 object Sse {
 
-  case class Message(data: String, event: Option[String] = None)
+  case class Message(data: String, event: Option[String] = Some("message"))
 
   val `text/event-stream`: ContentType =
     ContentType(MediaType.custom("text", "event-stream"), HttpCharsets.`UTF-8`)

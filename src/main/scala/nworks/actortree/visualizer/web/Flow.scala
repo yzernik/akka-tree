@@ -6,6 +6,10 @@ object Flow {
 
   sealed trait Event
 
-  case class MessageAdded(flowName: String, message: Message) extends Event
-  object MessageAdded { implicit val format = Json.format[MessageAdded] }
+  case class ActorAdded(actorPath: String, event: ActorAddedEvent) extends Event
+  case class ActorAddedEvent(`type`: String)
+  object ActorAdded {
+    implicit val formatEvent = Json.format[ActorAddedEvent]
+    implicit val format = Json.format[ActorAdded]
+  }
 }

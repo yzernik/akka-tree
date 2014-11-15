@@ -14,7 +14,7 @@ object Boot extends App {
   val monitor = system.actorOf(Props[ActorMonitor], name = "monitor")
 
   // create and start our http service
-  val service = system.actorOf(HttpService.props("localhost", 8080, 3.seconds), "http-service")
+  val service = system.actorOf(HttpService.props("127.0.0.1", 8080, 3.seconds), "http-service")
 
 
   //for testing
