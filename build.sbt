@@ -18,6 +18,13 @@ libraryDependencies ++= {
   )
 }
 
+libraryDependencies ++= {
+  Seq(
+    "junit" % "junit" % "4.10" % "test"
+    //, "org.scalatest" %% "scalatest" % "2.2.2" % "test"
+  )
+}
+
 // The Typesafe repository
 resolvers ++= Seq(
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
