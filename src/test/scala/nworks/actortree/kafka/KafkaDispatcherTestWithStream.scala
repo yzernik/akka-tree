@@ -13,6 +13,7 @@ import nworks.actortree.visualizer.web.FlowEventPublisher
 object KafkaDispatcherTestWithStream {
   private implicit val s = ActorSystem("bar")
   private implicit val materializer = FlowMaterializer()
+  var counter = 0
 
   def main(args: Array[String]): Unit = {
     val s = ActorSystem("bar")
@@ -25,7 +26,6 @@ object KafkaDispatcherTestWithStream {
     publish(source, kafkaMessageToMessage)
 
   }
-  var counter = 0
 
   def publish[A](messages: Source[A], toMessage: A => Message): Unit = {
     val entity = messages.map(toMessage).foreach(m => {
