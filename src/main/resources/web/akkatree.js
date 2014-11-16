@@ -179,10 +179,19 @@ function update() {
       .on("click", click)
       .call(force.drag);
 
-// nodes.forEach(function(d) { d.x = d.depth * 10; });
-
   // Exit any old nodes.
   node.exit().remove();
+
+  $('svg circle').tipsy({
+    gravity: 'w',
+    html: true,
+    title: function() {
+        var d = this.__data__;
+        console.log(d);
+        return 'Path: ' + d.actorpath + '';
+    }
+  });
+
 }
 
 function tick() {
@@ -197,13 +206,13 @@ function tick() {
 
 function color(d) {
   var colors = ["#1d4d70", "#3182bd", "#c6dbef", "#ffffff"];
-  console.log("level " + d.level);
+  //console.log("level " + d.level);
   return d.name == "user" ? "#ff0000" : colors[d.level % colors.length];
 }
 
 // Toggle children on click.
 function click(d) {
-  document.getElementById("actorname").innerHTML = d.actorpath;
+  //document.getElementById("actorname").innerHTML = d.actorpath;
 }
 
 // Returns a list of all nodes under the root.

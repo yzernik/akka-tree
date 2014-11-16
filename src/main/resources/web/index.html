@@ -18,12 +18,7 @@
     stroke: #9ecae1;
     stroke-width: 1.5px;
     }
-    #actorname {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 10;
-    }
+
     #log {
     position: absolute;
     bottom: 10px;
@@ -33,14 +28,16 @@
   </style>
 </head>
 <body>
-  <div id="actorname"></div>
+  <h1 align="center"><u>Akka Tree Visualization</u></h1>
   <div id="log"></div>
   <div id="canvas"></div>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="akkatree.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+  <script type="text/javascript" src="jquery.tipsy.js"></script>
+  <link href="tipsy.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript">
-
-    var guid = (function() {
+      var guid = (function() {
       function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
