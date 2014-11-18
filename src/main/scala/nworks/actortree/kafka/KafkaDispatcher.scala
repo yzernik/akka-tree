@@ -10,6 +10,8 @@ case class KafkaMessage(message: String)
 
 case class Consume()
 
+case class Consumed(message: Option[String])
+
 case class Stop(name: String)
 
 case class ClientName(name: String)
@@ -28,9 +30,10 @@ class KafkaDispatcher extends Actor {
   def receive = {
     case Recipient(ref, clientId) =>
       println(">>>>>>>>> new recipient " + clientId)
-      context.actorOf(SimpleConsumerWorker.props(Recipient(ref, clientId)), clientId)
+//      context.actorOf(SimpleConsumerWorker.props(Recipient(ref, clientId)), clientId)
 //      new worker to add after presentation
 //      context.actorOf(SimpleWorker.props(Recipient(ref, clientId)), clientId)
+      context.actorOf(ConsumerWorker.props(Recipient(ref, clientId)), clientId)
       map.put(ref.path.address.toString, clientId)
       context.watch(ref)
     case Terminated(ref) =>

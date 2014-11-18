@@ -14,15 +14,19 @@ import scala.collection.JavaConversions._
 import scala.collection.immutable.Stream
 
 object Kafka {
+  private lazy val zookeeperServer = new TestingServer(8020)
 
-  private val zookeeperServer = new TestingServer()
+//  val zkConnectString = "localhost:" + zookeeperServer.getPort()
+  val zkConnectString = "localhost:8020"
 
-  val zkConnectString = "localhost:" + zookeeperServer.getPort()
+  val groupId = "akka-tree-group"
   val topic = "akka-tree-messages"
-
   val seed = "localhost:9092"
 
-  lazy val producer = new KafkaProducer
+  lazy val producer = {
+    zookeeperServer
+    new KafkaProducer
+  }
 }
 
 private[journal] class KafkaProducer {
@@ -46,7 +50,7 @@ private[journal] class KafkaProducer {
     props.put("metadata.broker.list", Kafka.seed)
     props.put("serializer.class", "kafka.serializer.StringEncoder")
     props.put("producer.type", "async")
-    props.put("batch.size", "1")
+    props.put("batch.num.messages", "1")
     val config = new ProducerConfig(props)
 
     new Producer[String, String](config)
